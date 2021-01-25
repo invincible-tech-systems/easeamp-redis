@@ -1,0 +1,34 @@
+{
+    "name": "invincible-tech-systems/easeampredis",
+    "description": "A very simple and safe PHP library that provides methods to access redis cache in php applications. This wraps up the AmPHP related Redis Package to interact with Redis in-memory cache in an asynchronous & non-blocking way.",
+	"keywords": ["php", "Amphp", "Asynchronous", "non-blocking", "in-memory cache", "cache", "redis"],
+    "homepage": "https://www.invincibletechsystems.com/",
+    "type": "library",
+	"require": {
+        "amphp/redis": "^1.0"
+    },
+	"require-dev": {
+        "amphp/redis": "^1.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Veera Kumar Pasumarthi",
+			"email": "veerakumar@invincibletechsystems.com",
+            "homepage": "https://www.invincibletechsystems.com",
+            "role": "Developer"
+        },
+		{
+            "name": "Krishnaveni Nimmala",
+            "email": "krishnaveni.nimmala@invincibletechsystems.com",
+			"homepage": "https://www.invincibletechsystems.com",
+            "role": "Developer"
+        }
+    ],
+	"autoload": {
+       
+	   "psr-4": {
+            "InvincibleTechSystems\\EaseAmpRedis\\": "src/"
+        }
+    }
+}
