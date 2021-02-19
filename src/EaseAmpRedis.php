@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace InvincibleTechSystems\EaseAmpRedis;
 
+use \InvincibleTechSystems\EaseAmpRedis\Exceptions\EaseAmpRedisException;
+
 /*
 * Name: EaseAmpRedis
 *
@@ -11,7 +13,7 @@ namespace InvincibleTechSystems\EaseAmpRedis;
 *
 * Company: Invincible Tech Systems
 *
-* Version: 1.0.0
+* Version: 1.0.1
 *
 * Description: A very simple and safe PHP library that provides methods to access redis cache in php applications. This wraps up the AmPHP related Redis Package to 
 * interact with Redis in-memory cache in an asynchronous & non-blocking way.
@@ -67,11 +69,12 @@ class EaseAmpRedis
 
 	   	    try{
 
-                 $this->result = yield $this->redisClient->has($key);
+                $this->result = yield $this->redisClient->has($key);
 
-            }catch(RedisException $e){
-                        // reconnect in case the connection breaks, wait a second before doing so
-                  yield new Delayed(1000);
+            }catch(EaseAmpRedisException $e){
+
+                echo "\n EaseAmpRedisException - ", $e->getMessage(), (int)$e->getCode();
+
             }
 
     	});
@@ -92,11 +95,11 @@ class EaseAmpRedis
 
             try{
 
-            	 $this->result = yield $this->redisClient->getType($key);
+            	$this->result = yield $this->redisClient->getType($key);
 
-            }catch(RedisException $e){
+            }catch(EaseAmpRedisException $e){
                        
-                 yield new Delayed(1000);
+                yield new Delayed(1000);
             }
     	 	
     	});
@@ -117,11 +120,11 @@ class EaseAmpRedis
 
             try{
             
-                 $this->result = yield $this->redisClient->expireIn($key,$seconds);
+                $this->result = yield $this->redisClient->expireIn($key,$seconds);
 
-                }catch(RedisException $e){
+            }catch(EaseAmpRedisException $e){
                        
-                 yield new Delayed(1000);
+                yield new Delayed(1000);
             }
 
         });
@@ -142,11 +145,11 @@ class EaseAmpRedis
 
 	    	try{
 
-                 $this->result = yield $this->redisClient->increment($key,$num);
+                $this->result = yield $this->redisClient->increment($key,$num);
 
-            }catch(RedisException $e){
+            }catch(EaseAmpRedisException $e){
                        
-                 yield new Delayed(1000);
+                yield new Delayed(1000);
             }
     	 	
     	});
@@ -167,11 +170,11 @@ class EaseAmpRedis
 
         	try{
 
-                 $this->result = yield $this->redisClient->decrement($key,$num);
+                $this->result = yield $this->redisClient->decrement($key,$num);
 
-            }catch(RedisException $e){
+            }catch(EaseAmpRedisException $e){
                        
-                 yield new Delayed(1000);
+                yield new Delayed(1000);
             }
     	 	
     	});
@@ -190,11 +193,11 @@ class EaseAmpRedis
 
     		try{
 
-                 $this->result = yield $this->redisClient->publish($channel,$message);
+                $this->result = yield $this->redisClient->publish($channel,$message);
 
-            }catch(RedisException $e){
+            }catch(EaseAmpRedisException $e){
                        
-                 yield new Delayed(1000);
+                yield new Delayed(1000);
             }
 
         });
@@ -214,13 +217,13 @@ class EaseAmpRedis
 
             try{
 
-                 $subscription = yield $this->subscriber->subscribe($channel);
+                $subscription = yield $this->subscriber->subscribe($channel);
                  
-                 $this->result = true;
+                $this->result = true;
 
-            }catch(RedisException $e){
+            }catch(EaseAmpRedisException $e){
                        
-                 yield new Delayed(1000);
+                yield new Delayed(1000);
             }
             
         });
@@ -240,13 +243,13 @@ class EaseAmpRedis
 
             try{
 
-                 $subscriptionPattern = yield $this->subscriber->subscribeToPattern($pattern);
+                $subscriptionPattern = yield $this->subscriber->subscribeToPattern($pattern);
 
-                 $this->result = true;
+                $this->result = true;
 
-            }catch(RedisException $e){
+            }catch(EaseAmpRedisException $e){
                        
-                 yield new Delayed(1000);
+                yield new Delayed(1000);
             }
 
         });
@@ -265,15 +268,15 @@ class EaseAmpRedis
 
             try{
 
-                 $subscription = yield $this->subscriber->subscribe($channel);
+                $subscription = yield $this->subscriber->subscribe($channel);
 
-                 $subscription->cancel();
+                $subscription->cancel();
                  
-                 $this->result = true;
+                $this->result = true;
 
-            }catch(RedisException $e){
+            }catch(EaseAmpRedisException $e){
                        
-                 yield new Delayed(1000);
+                yield new Delayed(1000);
             }
             
         });
@@ -293,15 +296,15 @@ class EaseAmpRedis
 
             try{
 
-                 $subscriptionPattern = yield $this->subscriber->subscribeToPattern($pattern);
+                $subscriptionPattern = yield $this->subscriber->subscribeToPattern($pattern);
 
-                 $subscriptionPattern->cancel();
+                $subscriptionPattern->cancel();
 
-                 $this->result = true;
+                $this->result = true;
 
-            }catch(RedisException $e){
+            }catch(EaseAmpRedisException $e){
                        
-                 yield new Delayed(1000);
+                yield new Delayed(1000);
             }
 
         });
@@ -320,13 +323,13 @@ class EaseAmpRedis
 
             try{
 
-                 $this->result = yield $this->redisClient->setMultiple($data);
+                $this->result = yield $this->redisClient->setMultiple($data);
 
-                 $this->result = true;
+                $this->result = true;
 
-            }catch(RedisException $e){
+            }catch(EaseAmpRedisException $e){
                        
-                 yield new Delayed(1000);
+                yield new Delayed(1000);
             }
             
         });
@@ -371,11 +374,11 @@ class EaseAmpRedis
 
                     if(count($value) > 1){
      	 
-     	                 for($i = 0 ; $i < count($value) ; $i++){
+     	                for($i = 0 ; $i < count($value) ; $i++){
      		  
                               $this->result =  yield $list->pushTail($value[$i]);
 
-     	                 }
+     	                }
                 
                     } else {
      	    
@@ -385,9 +388,9 @@ class EaseAmpRedis
                
                 } 
 	    
-            }catch(RedisException $e){
+            }catch(EaseAmpRedisException $e){
                        
-                 yield new Delayed(1000);
+                yield new Delayed(1000);
             }			       
 
         });   
@@ -422,9 +425,9 @@ class EaseAmpRedis
 
                 } 
 	     	
-            }catch(RedisException $e){
+            }catch(EaseAmpRedisException $e){
                        
-                 yield new Delayed(1000);
+                yield new Delayed(1000);
             }                  
 		       
         });
@@ -445,15 +448,15 @@ class EaseAmpRedis
 
             try{
 
-	             $map = $this->redisClient->getMap($key);
+	            $map = $this->redisClient->getMap($key);
 
-	             $this->result = yield $map->setValues($value);
+	            $this->result = yield $map->setValues($value);
 
-                 $this->result = true;
+                $this->result = true;
 
-	     	}catch(RedisException $e){
+	     	}catch(EaseAmpRedisException $e){
                        
-                 yield new Delayed(1000);
+                yield new Delayed(1000);
             }		       
 
         });
@@ -484,55 +487,55 @@ class EaseAmpRedis
 
             try{
 	
-                 $exist = $this->exists($keyNamespacePrefix,$keyNameSuffix);
+                $exist = $this->exists($keyNamespacePrefix,$keyNameSuffix);
 	
-	             if($exist == true){
+	            if($exist == true){
 
-		             $type = $this->type($keyNamespacePrefix,$keyNameSuffix);
+		            $type = $this->type($keyNamespacePrefix,$keyNameSuffix);
 
-		             if($type == "string"){
+		            if($type == "string"){
 			
-                         \Amp\Loop::run(function() use ($key){
+                        \Amp\Loop::run(function() use ($key){
             
-                             $this->result = yield $this->redisClient->get($key);
+                            $this->result = yield $this->redisClient->get($key);
             
-                         });
+                        });
 		
-		             } else if($type == "list"){
+		            } else if($type == "list"){
 
-                         \Amp\Loop::run(function() use ($key){		     
+                        \Amp\Loop::run(function() use ($key){		     
 
-		                     $list = $this->redisClient->getList($key);
+		                    $list = $this->redisClient->getList($key);
 
-			                 $this->result = yield $list->getRange();
+			                $this->result = yield $list->getRange();
 
-			             });
+			            });
 
 		             } else if($type == "hash"){
 
-			             \Amp\Loop::run(function() use ($key){
+			            \Amp\Loop::run(function() use ($key){
 
-			                 $map = $this->redisClient->getMap($key);
+			                $map = $this->redisClient->getMap($key);
 
-			                 $this->result = yield $map->getAll();
+			                $this->result = yield $map->getAll();
 
-			             });
+			            });
          
                      } else{
 
-         	             $this->result = $key." does not return any type";
+         	            $this->result = $key." does not return any type";
                      
                      }
 
 	             } else {
 
-	                 $this->result = $key." does not exist";	
+	                $this->result = $key." does not exist";	
 	            
                  }
 
-            }catch(RedisException $e){
+            }catch(EaseAmpRedisException $e){
                        
-                 yield new Delayed(1000);
+                yield new Delayed(1000);
             }
 	
     	});
