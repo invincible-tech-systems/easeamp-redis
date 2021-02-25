@@ -44,6 +44,8 @@ class EaseAmpRedis
     private $redisClient;
 
     private $subscriber;
+	
+	private $subscriberResult;
 
 
     public function __construct(string $redisHost)
@@ -211,7 +213,7 @@ class EaseAmpRedis
     /*  Method for Subscribe the channel   */    
     
 
-    public function subscribe(string $channel)
+   /*  public function subscribe(string $channel)
     {
         \Amp\Loop::run(function() use ($channel){
 
@@ -230,13 +232,37 @@ class EaseAmpRedis
 
         return $this->result;
                 
+    } */
+	
+	public function subscribe(string $channel)
+    {
+        \Amp\Loop::run(function() use ($channel){
+
+            try{
+
+                $subscription = yield $this->subscriber->subscribe($channel);
+                 
+                while (yield $subscription->advance()) {
+				
+					$this->subscriberResult = $subscription->getCurrent();
+					
+				}
+
+            }catch(EaseAmpRedisException $e){
+                       
+                yield new Delayed(1000);
+            }
+            
+        });
+       
+	   return $this->subscriberResult;
     }
 
 
     /*  Method for Subscribe the pattern for subscribe all the channels matching the pattern   */    
     
 
-    public function pSubscribe(string $pattern)
+    /* public function pSubscribe(string $pattern)
     {
     
         \Amp\Loop::run(function() use ($pattern){
@@ -255,6 +281,32 @@ class EaseAmpRedis
         });
 
         return $this->result;
+                
+    } */
+	
+	public function pSubscribe(string $pattern)
+    {
+    
+        \Amp\Loop::run(function() use ($pattern){
+
+            try{
+
+                $subscriptionPattern = yield $this->subscriber->subscribeToPattern($pattern);
+
+                while (yield $subscriptionPattern->advance()) {
+				
+					$this->subscriberResult = $subscriptionPattern->getCurrent();
+					
+				}
+
+            }catch(EaseAmpRedisException $e){
+                       
+                yield new Delayed(1000);
+            }
+
+        });
+
+        return $this->subscriberResult;
                 
     }
 

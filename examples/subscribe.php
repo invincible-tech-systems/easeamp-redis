@@ -18,9 +18,9 @@ $method = new EaseAmpRedis('tcp://localhost:6379');
 
 /*  Method for Subscribe  the channel   */    
 
-$response =$method->subscribe('koo');
+$response =$method->subscribe('hello');
 
-var_dump($response); //true
+var_dump($response);
 
  echo "<br>";
 
@@ -28,7 +28,7 @@ var_dump($response); //true
 
 $response =$method->pSubscribe('h?llo');
 
-var_dump($response); //true
+var_dump($response);
 
 echo "<br>";
 
